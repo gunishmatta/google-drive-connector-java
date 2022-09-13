@@ -26,7 +26,7 @@ public class WebhookController {
     @PostMapping("/notifications")
     @ResponseBody
     public ResponseEntity<String> driveNotificationHandler(@RequestHeader(required = false) Map<String, String> headers) throws GeneralSecurityException, IOException, URISyntaxException {
-        webHookService.listChanges(headers.get("X-Goog-Channel-Token"));
+        webHookService.listChanges(headers.get("X-Goog-Channel-Token"),10);
         return ResponseEntity.ok("Success");
     }
 }

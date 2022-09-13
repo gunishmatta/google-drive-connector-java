@@ -24,20 +24,26 @@ public class WebHookServiceImpl implements WebHookService {
     private final GoogleDriveConfig drive;
 
 
-    public ChangeList listChanges(String token) throws GeneralSecurityException, IOException, URISyntaxException {
+    public ChangeList listChanges(String token,int batchSize) throws GeneralSecurityException, IOException, URISyntaxException {
+
+        int batchItemCount = 0;
+
         ChangeList changes = null;
-        String pageToken = token;
-        while (pageToken != null) {
-            changes = drive.getInstance().changes().list(pageToken)
-                    .execute();
 
-            if (changes.getNewStartPageToken() != null) {
-                token = changes.getNewStartPageToken();
+        while (batchItemCount++<=batchSize) {
+            String pageToken = token;
+            while (pageToken != null) {
+                changes = drive.getInstance().changes().list(pageToken)
+                        .execute();
+
+                if (changes.getNewStartPageToken() != null) {
+                    token = changes.getNewStartPageToken();
+                }
+                pageToken = changes.getNextPageToken();
             }
-            pageToken = changes.getNextPageToken();
-        }
 
-        writeChangesToFile(changes);
+            writeChangesToFile(changes);
+        }
 
         return changes;
     }

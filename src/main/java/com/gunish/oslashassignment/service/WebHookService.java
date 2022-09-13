@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 
 public interface WebHookService {
-    ChangeList listChanges(String token) throws GeneralSecurityException, IOException, URISyntaxException;
+    ChangeList listChanges(String token,int batchSize) throws GeneralSecurityException, IOException, URISyntaxException;
 
 
 }
