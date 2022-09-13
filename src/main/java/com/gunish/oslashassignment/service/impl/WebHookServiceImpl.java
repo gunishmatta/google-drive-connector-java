@@ -1,6 +1,7 @@
 package com.gunish.oslashassignment.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.services.drive.model.Change;
 import com.google.api.services.drive.model.ChangeList;
 import com.gunish.oslashassignment.config.GoogleDriveConfig;
 import com.gunish.oslashassignment.service.WebHookService;
@@ -16,6 +17,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -24,31 +27,44 @@ public class WebHookServiceImpl implements WebHookService {
     private final GoogleDriveConfig drive;
 
 
-    public ChangeList listChanges(String token,int batchSize) throws GeneralSecurityException, IOException, URISyntaxException {
+    public List<Change> listChanges(String token, int batchSize) throws GeneralSecurityException, IOException, URISyntaxException {
 
         int batchItemCount = 0;
 
-        ChangeList changes = null;
+        List<Change> changes = new ArrayList<>();
+        String pageToken = token;
 
-        while (batchItemCount++<=batchSize) {
-            String pageToken = token;
-            while (pageToken != null) {
-                changes = drive.getInstance().changes().list(pageToken)
-                        .execute();
+        while (batchSize<=1000) {
 
-                if (changes.getNewStartPageToken() != null) {
-                    token = changes.getNewStartPageToken();
-                }
-                pageToken = changes.getNextPageToken();
+            ChangeList changeList = drive.getInstance().changes().list(token)
+                    .execute();
+
+            for (Change change : changeList.getChanges()) {
+                // Process change
+                batchItemCount++;
+                log.info("current batch item {}",batchItemCount);
+                changes.add(change);
+            }
+            if (changeList.getNewStartPageToken() != null) {
+                // Last page, save this token for the next polling interval
+                token = changeList.getNewStartPageToken();
+            }
+            pageToken = changeList.getNextPageToken();
+            if (pageToken == null) {
+                pageToken = token;
             }
 
-            writeChangesToFile(changes);
+
+            if (batchItemCount == batchSize) {
+                writeChangesToFile(changes);
+                batchSize= batchSize * 10;
+            }
         }
 
         return changes;
     }
 
-    private void writeChangesToFile(ChangeList changes) throws IOException {
+    private void writeChangesToFile(List<Change> changes) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
 
