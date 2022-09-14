@@ -27,6 +27,15 @@ public class WebHookServiceImpl implements WebHookService {
     private final GoogleDriveConfig drive;
 
 
+    /**
+     * @param token
+     * @param batchSize
+     * @return List<Change>
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws URISyntaxException
+     * Lists changes in a file using batch
+     */
     public List<Change> listChanges(String token, int batchSize) throws GeneralSecurityException, IOException, URISyntaxException {
 
         int batchItemCount = 0;
@@ -64,7 +73,13 @@ public class WebHookServiceImpl implements WebHookService {
         return changes;
     }
 
+    /**
+     * @param changes
+     * @throws IOException
+     * Writes changes to a file
+     */
     private void writeChangesToFile(List<Change> changes) throws IOException {
+      //TODO:: Enrich this code
         ObjectMapper mapper = new ObjectMapper();
 
 

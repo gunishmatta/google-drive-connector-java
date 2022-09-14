@@ -33,6 +33,12 @@ public class GoogleDriveConfig {
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
+    /**
+     * @return Drive
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * This method builds returns an Instance of Drive to be used as an api client
+     */
     public Drive getInstance() throws GeneralSecurityException, IOException {
 
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -43,6 +49,12 @@ public class GoogleDriveConfig {
     }
 
 
+    /**
+     * @param HTTP_TRANSPORT
+     * @return Credential
+     * @throws IOException
+     * This method returns a Credential, loads the client secret, builds Google Auth Flow
+     */
     private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = GoogleDriveConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);

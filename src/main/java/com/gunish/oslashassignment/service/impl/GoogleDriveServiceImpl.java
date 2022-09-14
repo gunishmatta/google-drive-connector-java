@@ -25,6 +25,9 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author  Gunish Matta
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -34,6 +37,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
     private final GoogleDriveConfig drive;
 
 
+    /**
+     * @param name
+     * @return String
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * returns id from a Drive resource name
+     */
     public String getIdFromName(String name) throws IOException, GeneralSecurityException {
         FileList result = drive.getInstance().files().list()
                 .setSpaces("drive")
@@ -46,6 +56,12 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
         return "root";
     }
 
+    /**
+     * @return List<File>
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * returns everything in a user's drive
+     */
     public List<com.google.api.services.drive.model.File> listEverything() throws IOException, GeneralSecurityException {
         FileList result = drive.getInstance().files().list()
                 .setPageSize(1000)
@@ -66,6 +82,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService {
     }
 
 
+    /**
+     * @param folderName
+     * @throws Exception
+     * watches a folder in user's drive, a channel is created used for sending push notifications to a webhook address
+     */
     public void watchFolder(String folderName) throws Exception {
         String parentId = folderName == null ? "root" : getIdFromName(folderName);
         String query = "'" + parentId + "' in parents";

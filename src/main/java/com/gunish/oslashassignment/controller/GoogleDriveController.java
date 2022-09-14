@@ -13,11 +13,22 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+/**
+ * @author Gunish Matta
+ * Controller for Google Drive related operations
+ */
 @RestController
 public class GoogleDriveController {
 
     @Autowired
     private GoogleDriveService service;
+
+    /**
+     * @return ResponseEntity<List<File>>
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * returns all Files in a user's drive
+     */
 
     @GetMapping({"/files"})
     public ResponseEntity<List<File>> listEverything() throws IOException, GeneralSecurityException {
@@ -26,6 +37,12 @@ public class GoogleDriveController {
     }
 
 
+    /**
+     * @param folderName
+     * @return ResponseEntity<String>
+     * @throws Exception
+     * used to watch a particular folder in a drive
+     */
     @GetMapping("/watchfolder")
     public ResponseEntity<String> watchFolder(@RequestParam String folderName) throws Exception {
         service.watchFolder(folderName);
