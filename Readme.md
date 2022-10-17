@@ -1,5 +1,4 @@
-OSlash – Integration Engineering Assignment (Java)
-
+Google Drive Connector built with Java and Spring Boot
 ```
 Use the Google API to connect, fetch all documents currently existing, and then listen for changes on a particular Google Drive folder using WebHook.
 Writes into a json file every 'n' batch size
